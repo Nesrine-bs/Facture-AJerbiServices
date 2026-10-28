@@ -1,0 +1,10 @@
+{
+  "name": "Factures — A Jerbi Services",
+  "short_name": "Factures AJ",
+  "description": "Création et suivi des factures A Jerbi Services",
+  "lang": "fr-TN",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f5",
+  "theme_color": "#102b26"
+}
