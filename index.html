@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b26">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Factures — A Jerbi Services</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-gate hidden" id="auth-gate">
+    <form class="auth-card" id="login-form">
+      <span class="brand-mark">AJ</span><span class="eyebrow">A JERBI SERVICES</span>
+      <h1>Accéder aux factures</h1><p>Connectez-vous avec votre compte autorisé pour retrouver les factures partagées.</p>
+      <label class="field">Adresse e-mail<input id="login-email" type="email" autocomplete="username" required></label>
+      <label class="field">Mot de passe<input id="login-password" type="password" autocomplete="current-password" required></label>
+      <button class="button button-primary" id="login-button" type="submit">Se connecter</button>
+      <div class="auth-message" id="auth-message" role="status"></div>
+      <small>Les comptes sont créés par l’administrateur de l’espace.</small>
+    </form>
+  </section>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="A Jerbi Services, accueil">
+        <span class="brand-mark">AJ</span><span><strong>A JERBI</strong><small>SERVICES</small></span>
+      </a>
+      <div class="workspace-label">ESPACE DE TRAVAIL</div>
+      <nav aria-label="Navigation principale">
+        <button class="nav-item active" data-view="new"><span class="nav-icon">＋</span>Nouvelle facture</button>
+        <button class="nav-item" data-view="history"><span class="nav-icon">▤</span>Historique <span class="nav-count" id="history-count">0</span></button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Paramètres</button>
+      </nav>
+      <div class="sidebar-bottom"><span class="status-dot" id="sync-dot"></span><span id="sync-label">Enregistrement automatique</span><br><small id="sync-detail">Données enregistrées sur cet appareil</small><button id="logout-button" class="logout-button hidden" type="button">Se déconnecter</button></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar"><div><span class="eyebrow">A JERBI SERVICES</span><h1 id="page-title">Créer une facture</h1></div><span class="today-pill" id="today-pill"></span></header>
+
+      <section class="view" id="view-new">
+        <div class="intro"><div><h2>Préparez votre facture</h2><p>Renseignez le client et les lignes à facturer. Les montants se calculent automatiquement.</p></div><span class="step-badge">N° <b id="next-number-label">16</b></span></div>
+        <div class="editor-grid">
+          <div class="form-column">
+            <section class="card">
+              <div class="card-heading"><span class="section-index">01</span><div><h3>Informations du client</h3><p>Les coordonnées apparaîtront sur le document.</p></div></div>
+              <div class="form-grid">
+                <label class="field span-2">Nom du client <span class="required">*</span><input id="client-name" autocomplete="organization" placeholder="Ex. Société Exemple" required></label>
+                <label class="field span-2">Adresse <span class="optional">facultatif</span><input id="client-address" placeholder="Adresse du client"></label>
+                <label class="field span-2">Identifiant unique (IU) <span class="optional">facultatif</span><input id="client-id" placeholder="Identifiant fiscal"></label>
+              </div>
+            </section>
+            <section class="card items-card">
+              <div class="card-heading"><span class="section-index">02</span><div><h3>Détail de la facture</h3><p>Ajoutez une ou plusieurs prestations.</p></div></div>
+              <div class="items-head"><span>DÉSIGNATION</span><span>QTÉ</span><span>PRIX UNIT. HT</span><span>TOTAL HT</span><span></span></div>
+              <div id="items-list"></div>
+              <button class="add-line" id="add-line"><span>＋</span> Ajouter une ligne</button>
+              <div class="tax-note"><span class="info-icon">i</span> TVA <b id="tax-rate-note">19 %</b> et timbre fiscal <b id="stamp-note">1,000 DT</b>, selon le modèle fourni.</div>
+              <label class="signature-option"><input id="include-signature" type="checkbox"><span class="custom-check"></span><span>Ajouter le cachet et la signature sur cette facture</span></label>
+            </section>
+            <div class="form-actions"><button class="button button-light" id="reset-form">Effacer</button><button class="button button-primary" id="generate-invoice">Générer la facture <span>→</span></button></div>
+          </div>
+          <aside class="summary-card"><div class="summary-title"><span>APERÇU DU TOTAL</span><span class="live-dot">● EN DIRECT</span></div><div class="summary-client" id="summary-client">Nom du client</div><div class="summary-row"><span>Total HT</span><strong id="sum-ht">0,000 DT</strong></div><div class="summary-row"><span>TVA (<span id="sum-tax-rate">19</span> %)</span><strong id="sum-tax">0,000 DT</strong></div><div class="summary-row"><span>Timbre fiscal</span><strong id="sum-stamp">1,000 DT</strong></div><div class="grand-total"><span>Total TTC</span><strong id="sum-ttc">1,000 <small>DT</small></strong></div><div class="summary-foot">La facture sera datée du jour de sa génération.</div></aside>
+        </div>
+      </section>
+
+      <section class="view hidden" id="view-history">
+        <div class="intro"><div><h2>Vos factures</h2><p>Retrouvez les documents de l’espace partagé.</p></div><button class="button button-primary" id="history-new">＋ Nouvelle facture</button></div>
+        <div class="card history-card"><div class="history-toolbar"><input id="history-search" placeholder="Rechercher un numéro ou un client…"><span id="history-total">0 facture</span></div><div id="history-list"></div></div>
+      </section>
+
+      <section class="view hidden" id="view-settings">
+        <div class="intro"><div><h2>Paramètres</h2><p>Adaptez la numérotation et les taxes à votre activité.</p></div></div>
+        <div class="card settings-card"><div class="card-heading"><span class="section-index">⚙</span><div><h3>Configuration des factures</h3><p>Les modifications s’appliquent aux prochaines factures.</p></div></div><div class="form-grid settings-grid"><label class="field">Prochain numéro de facture<input id="setting-number" type="number" min="1" step="1"></label><label class="field">TVA (%)<input id="setting-tax" type="number" min="0" max="100" step="0.1"></label><label class="field">Timbre fiscal (DT)<input id="setting-stamp" type="number" min="0" step="0.001"></label></div><div class="settings-actions"><button class="button button-primary" id="save-settings">Enregistrer les paramètres</button></div><div class="data-note"><b>À propos de vos données</b><p>Avec la connexion configurée, les factures et paramètres sont synchronisés entre les comptes autorisés. Une copie de sauvegarde JSON peut être exportée depuis cet appareil.</p><button class="button button-light" id="export-data">Exporter les données (JSON)</button></div></div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="print-root" aria-hidden="true"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
